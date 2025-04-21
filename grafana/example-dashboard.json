@@ -81,7 +81,7 @@
             },
             "editorMode": "code",
             "exemplar": true,
-            "expr": "sum(litestar_requests_total{app_name=\"$app_name\", path!=\"/metrics\"})",
+            "expr": "sum(my_http_requests_total{app_name=\"$app_name\", path!=\"/metrics\"})",
             "instant": true,
             "interval": "",
             "legendFormat": "",
@@ -164,7 +164,7 @@
             },
             "editorMode": "code",
             "exemplar": true,
-            "expr": "litestar_requests_total{app_name=\"$app_name\", path!=\"/metrics\"}",
+            "expr": "my_http_requests_total{app_name=\"$app_name\", path!=\"/metrics\"}",
             "instant": true,
             "interval": "",
             "legendFormat": "{{method}} {{path}}",
@@ -269,7 +269,7 @@
             },
             "editorMode": "code",
             "exemplar": true,
-            "expr": "litestar_request_duration_seconds_sum{app_name=\"$app_name\"} / litestar_request_duration_seconds_count{app_name=\"$app_name\"}",
+            "expr": "my_http_request_duration_seconds_sum{app_name=\"$app_name\"} / my_http_request_duration_seconds_count{app_name=\"$app_name\"}",
             "interval": "",
             "legendFormat": "{{method}} {{path}}",
             "range": true,
@@ -368,7 +368,7 @@
               "uid": "PBFA97CFB590B2093"
             },
             "exemplar": true,
-            "expr": "histogram_quantile(.99,sum(rate(litestar_request_duration_seconds_bucket{app_name=\"$app_name\", path!=\"/metrics\"}[1m])) by(path, le))",
+            "expr": "histogram_quantile(.99,sum(rate(my_http_request_duration_seconds_bucket{app_name=\"$app_name\", path!=\"/metrics\"}[1m])) by(path, le))",
             "interval": "",
             "legendFormat": "{{path}}",
             "refId": "A"
@@ -466,7 +466,7 @@
             },
             "editorMode": "code",
             "exemplar": true,
-            "expr": "litestar_requests_in_progress{app_name=\"$app_name\", path!=\"/metrics\"}",
+            "expr": "my_http_requests_in_progress{app_name=\"$app_name\", path!=\"/metrics\"}",
             "interval": "",
             "legendFormat": "{{path}}",
             "range": true,
@@ -565,7 +565,7 @@
               "uid": "PBFA97CFB590B2093"
             },
             "exemplar": true,
-            "expr": "rate(litestar_requests_total{app_name=\"$app_name\"}[1m])",
+            "expr": "rate(my_http_requests_total{app_name=\"$app_name\"}[1m])",
             "interval": "",
             "legendFormat": "{{path}}",
             "refId": "A"
@@ -628,21 +628,21 @@
       "list": [
         {
           "current": {
-            "text": "litestar",
-            "value": "litestar"
+            "text": "http",
+            "value": "http"
           },
           "datasource": {
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "definition": "label_values(litestar_requests_total,app_name)",
+          "definition": "label_values(my_http_requests_total,app_name)",
           "includeAll": false,
           "label": "Application Name",
           "name": "app_name",
           "options": [],
           "query": {
             "qryType": 1,
-            "query": "label_values(litestar_requests_total,app_name)",
+            "query": "label_values(my_http_requests_total,app_name)",
             "refId": "PrometheusVariableQueryEditor-VariableQuery"
           },
           "refresh": 1,

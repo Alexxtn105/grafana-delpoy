@@ -15,7 +15,7 @@ import (
 var (
 	httpRequestsTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "http_requests_total",
+			Name: "my_http_requests_total",
 			Help: "Total number of HTTP requests",
 		},
 		[]string{"method", "path", "status"},
@@ -23,7 +23,7 @@ var (
 
 	httpRequestDuration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
-			Name:    "http_request_duration_seconds",
+			Name:    "my_http_request_duration_seconds",
 			Help:    "Duration of HTTP requests",
 			Buckets: []float64{0.1, 0.3, 0.5, 1.0, 2.5, 5.0},
 		},
@@ -32,7 +32,7 @@ var (
 
 	httpErrorsTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "http_errors_total",
+			Name: "my_http_errors_total",
 			Help: "Total number of HTTP errors",
 		},
 		[]string{"method", "path", "status"},
