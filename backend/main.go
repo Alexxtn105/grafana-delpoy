@@ -37,6 +37,13 @@ var (
 		},
 		[]string{"method", "path", "status"},
 	)
+
+	metricsEndpointHits = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "app_metrics_endpoint_hits_total",
+			Help: "Total number of hits to /metrics endpoint",
+		},
+	)
 )
 
 func init() {
@@ -72,7 +79,26 @@ func main() {
 func metricsHandler() gin.HandlerFunc {
 	h := promhttp.Handler()
 	return func(c *gin.Context) {
+		start := time.Now()
+
+		// Инкрементируем счетчик обращений к /metrics
+		metricsEndpointHits.Inc()
+
+		// Обновляем общие метрики запросов
+		httpRequestsTotal.WithLabelValues(
+			c.Request.Method,
+			c.Request.URL.Path,
+			strconv.Itoa(http.StatusOK),
+		).Inc()
+
+		// Вызываем стандартный обработчик Prometheus
 		h.ServeHTTP(c.Writer, c.Request)
+
+		// Замеряем время выполнения
+		httpRequestDuration.WithLabelValues(
+			c.Request.Method,
+			c.Request.URL.Path,
+		).Observe(time.Since(start).Seconds())
 	}
 }
 
@@ -114,6 +140,18 @@ func statusHandler(c *gin.Context) {
 		time.Sleep(time.Duration(secondsSleep) * time.Second)
 	}
 
+	// Обновляем метрики
+	httpRequestsTotal.WithLabelValues(
+		c.Request.Method,
+		c.Request.URL.Path,
+		strconv.Itoa(statusCode),
+	).Inc()
+
+	httpRequestDuration.WithLabelValues(
+		c.Request.Method,
+		c.Request.URL.Path,
+	).Observe(time.Since(start).Seconds())
+
 	// Возвращаем ошибку если статус код не 200
 	if statusCode != http.StatusOK {
 		log.Printf("Returning error status: %d", statusCode)
@@ -126,18 +164,6 @@ func statusHandler(c *gin.Context) {
 		c.AbortWithStatusJSON(statusCode, gin.H{"error": "an error occurred"})
 		return
 	}
-
-	// Обновляем метрики
-	httpRequestsTotal.WithLabelValues(
-		c.Request.Method,
-		c.Request.URL.Path,
-		strconv.Itoa(statusCode),
-	).Inc()
-
-	httpRequestDuration.WithLabelValues(
-		c.Request.Method,
-		c.Request.URL.Path,
-	).Observe(time.Since(start).Seconds())
 
 	c.JSON(http.StatusOK, gin.H{"data": "Hello"})
 }
